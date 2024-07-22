@@ -40,26 +40,29 @@ if($vs2008) {
     $iconvLib = Join-Path (pwd) libiconv_static$platDir\Release
 }
 
+# lxml expects iconv to be called libiconv, not libiconv_a
+Dir $iconvLib\libiconv_a* | Copy-Item -Force -Destination {Join-Path $iconvLib ($_.Name -replace "libiconv_a","libiconv") }
+
 $iconvInc = Join-Path $PSScriptRoot libiconv\source\include
 
 Set-Location $PSScriptRoot
 
 Set-Location .\zlib
-Start-Process -NoNewWindow -Wait nmake "-f win32/Makefile.msc zlib.lib"
+cmd /c "nmake -f win32/Makefile.msc zlib.lib 2>&1"
 $zlibLib = (pwd)
 $zlibInc = (pwd)
 Set-Location ..
 
 Set-Location .\libxml2\win32
 cscript configure.js lib="$zlibLib;$iconvLib" include="$zlibInc;$iconvInc" vcmanifest=yes zlib=yes
-Start-Process -NoNewWindow -Wait nmake libxmla
+cmd /c "nmake 2>&1"
 $xmlLib = Join-Path (pwd) bin.msvc
 $xmlInc = Join-Path (pwd) ..\include
 Set-Location ..\..
 
 Set-Location .\libxslt\win32
 cscript configure.js lib="$zlibLib;$iconvLib;$xmlLib" include="$zlibInc;$iconvInc;$xmlInc" vcmanifest=yes zlib=yes
-Start-Process -NoNewWindow -Wait nmake "libxslta libexslta"
+cmd /c "nmake 2>&1"
 Set-Location ..\..
 
 if($vs2008) {
@@ -71,6 +74,10 @@ if($vs2008) {
 Function BundleRelease($name, $lib, $inc)
 {
     New-Item -ItemType Directory .\dist\$name
+
+    New-Item -ItemType Directory .\dist\$name\bin
+    Copy-Item -Recurse $lib .\dist\$name\bin
+    Get-ChildItem -File -Recurse .\dist\$name\bin | Where{$_.Name -NotMatch ".(exe|dll|pdb)$" } | Remove-Item
 
     New-Item -ItemType Directory .\dist\$name\lib
     Copy-Item -Recurse $lib .\dist\$name\lib
@@ -87,10 +94,7 @@ Function BundleRelease($name, $lib, $inc)
 if (Test-Path .\dist) { Remove-Item .\dist -Recurse }
 New-Item -ItemType Directory .\dist
 
-# lxml expects iconv to be called iconv, not libiconv
-Dir $iconvLib\libiconv* | Copy-Item -Force -Destination {Join-Path $iconvLib ($_.Name -replace "libiconv","iconv") }
-
-BundleRelease "iconv-1.14.$distname" (dir $iconvLib\iconv_a*) (dir $iconvInc\*)
+BundleRelease "iconv-1.14.$distname" (dir $iconvLib\iconv*) (dir $iconvInc\*)
 BundleRelease "libxml2-2.9.5.$distname" (dir $xmlLib\*) (Get-Item $xmlInc\libxml)
 BundleRelease "libxslt-1.1.30.$distname" (dir .\libxslt\win32\bin.msvc\*) (Get-Item .\libxslt\libxslt,.\libxslt\libexslt)
 BundleRelease "zlib-1.2.11.$distname" (Get-Item .\zlib\*.*) (Get-Item .\zlib\zconf.h,.\zlib\zlib.h)
