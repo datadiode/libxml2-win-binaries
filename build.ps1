@@ -76,7 +76,7 @@ cmd /c "nmake 2>&1"
 Set-Location ..
 $env:Path += ";$xmlLib"
 $OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
-cmd /c "py 2>&1" .\win32\runtests.py
+py .\win32\runtests.py
 Set-Location ..
 
 if($vs2008) {
