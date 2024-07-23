@@ -75,7 +75,7 @@ cscript configure.js lib="$zlibLib;$iconvLib;$xmlLib" include="$zlibInc;$iconvIn
 cmd /c "nmake 2>&1"
 Set-Location ..
 $env:Path += ";$xmlLib"
-py .\win32\runtests.py
+cmd /c "py 2>&1" .\win32\runtests.py
 Set-Location ..
 
 if($vs2008) {
