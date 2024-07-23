@@ -75,8 +75,7 @@ cscript configure.js lib="$zlibLib;$iconvLib;$xmlLib" include="$zlibInc;$iconvIn
 cmd /c "nmake 2>&1"
 Set-Location ..
 $env:Path += ";$xmlLib"
-$OutputEncoding = [Console]::OutputEncoding = [Text.UTF8Encoding]::UTF8
-py .\win32\runtests.py
+cmd /c "chcp 65001 & set PYTHONIOENCODING=utf-8 & py 2>&1" .\win32\runtests.py
 Set-Location ..
 
 if($vs2008) {
