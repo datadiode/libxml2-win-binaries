@@ -6,17 +6,6 @@ environment:
   - Architecture: x64
     Compiler: vs2019
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-  - Architecture: arm64
-    Compiler: vs2019
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-  - Architecture: x86
-    Compiler: vs2008
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-  - Architecture: x64
-    Compiler: vs2008
-    PYTHON_ARCH: 64
-    PATCH_VS2008: True
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
 install:
 - cmd: git submodule update --init --recursive
