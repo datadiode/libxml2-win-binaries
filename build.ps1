@@ -66,12 +66,17 @@ cscript configure.js lib="$zlibLib;$iconvLib" include="$zlibInc;$iconvInc" vcman
 cmd /c "nmake 2>&1"
 $xmlLib = Join-Path (pwd) bin.msvc
 $xmlInc = Join-Path (pwd) ..\include
-Set-Location ..\..
+Set-Location ..
+.\win32\bin.msvc\runtest.exe
+Set-Location ..
 
 Set-Location .\libxslt\win32
 cscript configure.js lib="$zlibLib;$iconvLib;$xmlLib" include="$zlibInc;$iconvInc;$xmlInc" vcmanifest=yes zlib=yes
 cmd /c "nmake 2>&1"
-Set-Location ..\..
+Set-Location ..
+$env:Path += ";$xmlLib"
+py .\win32\runtests.py
+Set-Location ..
 
 if($vs2008) {
     # Pushed by Import-VisualStudioVars
