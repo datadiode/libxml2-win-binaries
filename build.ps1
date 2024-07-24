@@ -108,6 +108,6 @@ if (Test-Path .\dist) { Remove-Item .\dist -Recurse }
 New-Item -ItemType Directory .\dist
 
 BundleRelease "iconv-1.17.$distname" (dir $iconvLib\libiconv*) (dir $iconvInc\*)
-BundleRelease "libxml2-2.10.4.$distname" (dir $xmlLib\*) (Get-Item $xmlInc\libxml)
+BundleRelease "libxml2-2.11.8.$distname" (dir $xmlLib\*) (Get-Item $xmlInc\libxml)
 BundleRelease "libxslt-1.1.39.$distname" (dir .\libxslt\win32\bin.msvc\*) (Get-Item .\libxslt\libxslt,.\libxslt\libexslt)
 BundleRelease "zlib-1.2.12.$distname" (Get-Item .\zlib\*.*) (Get-Item .\zlib\zconf.h,.\zlib\zlib.h)
