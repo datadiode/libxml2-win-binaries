@@ -23,7 +23,9 @@ If($vs2008) {
     Import-VisualStudioVars -VisualStudioVersion "90" -Architecture $vcvarsarch
 } Else {
     $vcvarsarch = If($x64) { "x86_amd64" } ElseIf ($arm64) { "x86_arm64" } Else { "32" }
-    cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars$vcvarsarch.bat`" && set > %temp%\vcvars$vcvarsarch.txt"
+    $vswhere = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+    $env:VisualStudioInstallationPath = & $vswhere '--%' -latest -property installationPath
+    cmd.exe /c "call `"%VisualStudioInstallationPath%\VC\Auxiliary\Build\vcvars$vcvarsarch.bat`" && set > %temp%\vcvars$vcvarsarch.txt"
     Get-Content "$env:temp\vcvars$vcvarsarch.txt" | Foreach-Object {
         if ($_ -match "^(.*?)=(.*)$") {
             Set-Content "env:\$($matches[1])" $matches[2]
