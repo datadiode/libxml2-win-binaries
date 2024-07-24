@@ -87,6 +87,9 @@ if($vs2008) {
 # Bundle releases
 Function BundleRelease($name, $lib, $inc)
 {
+    $name = & cmd /c '--%' "cd $name & git describe"
+    $name = "$name.$distname"
+
     New-Item -ItemType Directory .\dist\$name
 
     New-Item -ItemType Directory .\dist\$name\bin
@@ -108,7 +111,7 @@ Function BundleRelease($name, $lib, $inc)
 if (Test-Path .\dist) { Remove-Item .\dist -Recurse }
 New-Item -ItemType Directory .\dist
 
-BundleRelease "iconv-1.17.$distname" (dir $iconvLib\libiconv*) (dir $iconvInc\*)
-BundleRelease "libxml2-2.11.8.$distname" (dir $xmlLib\*) (Get-Item $xmlInc\libxml)
-BundleRelease "libxslt-1.1.39.$distname" (dir .\libxslt\win32\bin.msvc\*) (Get-Item .\libxslt\libxslt,.\libxslt\libexslt)
-BundleRelease "zlib-1.2.12.$distname" (Get-Item .\zlib\*.*) (Get-Item .\zlib\zconf.h,.\zlib\zlib.h)
+BundleRelease "libiconv" (dir $iconvLib\libiconv*) (dir $iconvInc\*)
+BundleRelease "libxml2" (dir $xmlLib\*) (Get-Item $xmlInc\libxml)
+BundleRelease "libxslt" (dir .\libxslt\win32\bin.msvc\*) (Get-Item .\libxslt\libxslt,.\libxslt\libexslt)
+BundleRelease "zlib" (Get-Item .\zlib\*.*) (Get-Item .\zlib\zconf.h,.\zlib\zlib.h)
