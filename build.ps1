@@ -76,8 +76,7 @@ Set-Location .\libxslt\win32
 cscript configure.js lib="$zlibLib;$iconvLib;$xmlLib" include="$zlibInc;$iconvInc;$xmlInc" vcmanifest=yes zlib=yes
 cmd /c "nmake 2>&1"
 Set-Location ..
-$env:Path += ";$xmlLib"
-cmd /c "chcp 65001 & set PYTHONIOENCODING=utf-8 & py 2>&1" .\win32\runtests.py
+cmd /c "chcp 65001 & set PYTHONIOENCODING=utf-8 & set PATH=$xmlLib;%PATH% & where libxml2.dll & py 2>&1" .\win32\runtests.py
 Set-Location ..
 
 if($vs2008) {
