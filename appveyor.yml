@@ -29,6 +29,16 @@ build_script:
 
     .\build.ps1 -x64:$x64param -arm64:$arm64param -vs2008:$vs2008param
 
-test: off
-test_script:
+after_build:
 - ps: Get-ChildItem dist\*.zip | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+
+test_script:
+- cmd: |-
+    set PATH=%APPVEYOR_BUILD_FOLDER%\libxml2\win32\bin.msvc\;%PATH%
+    where libxml2.dll
+    cd %APPVEYOR_BUILD_FOLDER%\libxml2
+    win32\bin.msvc\runtest.exe
+    cd %APPVEYOR_BUILD_FOLDER%\libxslt
+    chcp 65001
+    set PYTHONIOENCODING=utf-8
+    py win32\runtests.py
