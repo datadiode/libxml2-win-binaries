@@ -8,6 +8,8 @@ environment:
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 
 install:
+- cmd: git config --global user.email "%USERNAME%@%USERDNSDOMAIN%"
+- cmd: git config --global user.name "%USERNAME%"
 - cmd: git submodule update --init --recursive
 - ps: install-module pscx -scope CurrentUser -AllowClobber
 - ps: >-

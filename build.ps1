@@ -65,6 +65,10 @@ Set-Location ..
 
 Set-Location .\libxml2\win32
 cscript configure.js lib="$zlibLib;$iconvLib" include="$zlibInc;$iconvInc" vcmanifest=yes zlib=yes
+# Ensure that this version is properly tagged in the repository, just in case upstream lacks a tag
+$version = Get-Content 'config.msvc' | Where-Object { $_ -match 'LIBXML_' } | ConvertFrom-StringData
+$tagname = 'libxml-' + $version.LIBXML_MAJOR_VERSION + '.' + $version.LIBXML_MINOR_VERSION + '.' + $version.LIBXML_MICRO_VERSION
+cmd /c "git tag $tagname -a -m $tagname 2>&1"
 cmd /c "nmake 2>&1"
 $xmlLib = Join-Path (pwd) bin.msvc
 $xmlInc = Join-Path (pwd) ..\include
@@ -72,6 +76,10 @@ Set-Location ..\..
 
 Set-Location .\libxslt\win32
 cscript configure.js lib="$zlibLib;$iconvLib;$xmlLib" include="$zlibInc;$iconvInc;$xmlInc" vcmanifest=yes zlib=yes
+# Ensure that this version is properly tagged in the repository, just in case upstream lacks a tag
+$version = Get-Content 'config.msvc' | Where-Object { $_ -match 'LIBXSLT_' } | ConvertFrom-StringData
+$tagname = 'libxslt-' + $version.LIBXSLT_MAJOR_VERSION + '.' + $version.LIBXSLT_MINOR_VERSION + '.' + $version.LIBXSLT_MICRO_VERSION
+cmd /c "git tag $tagname -a -m $tagname 2>&1"
 cmd /c "nmake 2>&1"
 Set-Location ..\..
 
@@ -83,7 +91,7 @@ if($vs2008) {
 # Bundle releases
 Function BundleRelease($name, $lib, $inc)
 {
-    $name = & cmd /c '--%' "cd $name & git describe"
+    $name = & cmd /c '--%' "cd $name & git describe --long"
     $name = "$name.$distname"
 
     New-Item -ItemType Directory .\dist\$name
