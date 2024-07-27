@@ -98,15 +98,15 @@ Function BundleRelease($name, $lib, $inc)
 
     New-Item -ItemType Directory .\dist\$name\bin
     Copy-Item -Recurse $lib .\dist\$name\bin
-    Get-ChildItem -File -Recurse .\dist\$name\bin | Where{$_.Name -NotMatch ".(exe|dll|pdb)$" } | Remove-Item
+    Get-ChildItem -File -Recurse .\dist\$name\bin | Where{$_.Name -NotMatch "^([^_]+\.exe|[^_]+\.dll)$" } | Remove-Item
 
     New-Item -ItemType Directory .\dist\$name\lib
     Copy-Item -Recurse $lib .\dist\$name\lib
-    Get-ChildItem -File -Recurse .\dist\$name\lib | Where{$_.Name -NotMatch ".(lib|pdb)$" } | Remove-Item
+    Get-ChildItem -File -Recurse .\dist\$name\lib | Where{$_.Name -NotMatch "^([^_]+\.lib|[^_]+\.pdb)$" } | Remove-Item
 
     New-Item -ItemType Directory .\dist\$name\include
     Copy-Item -Recurse $inc .\dist\$name\include
-    Get-ChildItem -File -Recurse .\dist\$name\include | Where{$_.Name -NotMatch ".h$" } | Remove-Item
+    Get-ChildItem -File -Recurse .\dist\$name\include | Where{$_.Name -NotMatch "\.h$" } | Remove-Item
 
     7z a dist\$name.7z dist\$name\.
     Remove-Item -Recurse -Path .\dist\$name
