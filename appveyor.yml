@@ -44,3 +44,14 @@ test_script:
     chcp 65001
     set PYTHONIOENCODING=utf-8
     py win32\runtests.py
+
+deploy:
+  release: $(APPVEYOR_REPO_TAG_NAME)
+  provider: GitHub
+  auth_token:
+    secure: ZOD37dsqqUJiAmkwLD/Sg/elBadYlAJPJetqFHtX7AwEshNFBs9ZZBtvBEzowp8+
+  artifact: /.*\.7z/
+  draft: false
+  prerelease: false
+  on:
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
