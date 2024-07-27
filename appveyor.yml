@@ -32,7 +32,7 @@ build_script:
     .\build.ps1 -x64:$x64param -arm64:$arm64param -vs2008:$vs2008param
 
 after_build:
-- ps: Get-ChildItem dist\*.zip | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+- ps: Get-ChildItem dist\*.7z | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 test_script:
 - cmd: |-

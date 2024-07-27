@@ -108,7 +108,7 @@ Function BundleRelease($name, $lib, $inc)
     Copy-Item -Recurse $inc .\dist\$name\include
     Get-ChildItem -File -Recurse .\dist\$name\include | Where{$_.Name -NotMatch ".h$" } | Remove-Item
 
-    Write-Zip  .\dist\$name .\dist\$name.zip
+    7z a dist\$name.7z dist\$name\.
     Remove-Item -Recurse -Path .\dist\$name
 }
 
