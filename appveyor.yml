@@ -11,6 +11,7 @@ install:
 - cmd: git config --global user.email "%USERNAME%@%USERDNSDOMAIN%"
 - cmd: git config --global user.name "%USERNAME%"
 - cmd: git submodule update --init --recursive
+- cmd: py -m pip install scancode-toolkit
 - ps: install-module pscx -scope CurrentUser -AllowClobber
 - ps: >-
     if ($env:PATCH_VS2008 -eq 'True') {
@@ -22,6 +23,10 @@ install:
     }
 build: off
 build_script:
+- cmd: C:\Python312-x64\Scripts\scancode.exe -cl --license-text --json-pp LICENSE.libiconv.json libiconv\source\COPYING.LIB
+- cmd: C:\Python312-x64\Scripts\scancode.exe -cl --license-text --json-pp LICENSE.libxml2.json libxml2\Copyright
+- cmd: C:\Python312-x64\Scripts\scancode.exe -cl --license-text --json-pp LICENSE.libxslt.json libxslt\Copyright
+- cmd: C:\Python312-x64\Scripts\scancode.exe -cl --license-text --json-pp LICENSE.zlib.json zlib\zlib.h
 - ps: >-
     $x64param = if ($env:Architecture -eq 'x64') { $true } else { $false }
 

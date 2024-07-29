@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<h2>@SUBJECT@ License</h2>
+<script>
+var json = @JSON@;
+
+var fragments = [];
+var mnemonics = [];
+var blacklist = /^copyrighted\W/;
+
+function walk(node)
+{
+    if (node !== null && typeof node === 'object')
+    {
+        for (var key in node)
+        {
+            var value = node[key];
+            if (key === "copyright" && !blacklist.test(value) || key === "matched_text")
+                fragments[parseInt(node["end_line"])] = value;
+            else if (key === "spdx_license_expression")
+                mnemonics[parseInt(node["end_line"])] = value;
+            else
+                walk(value);
+        }
+    }
+}
+
+document.write("<pre>");
+walk(json.files);
+var flags = 1;
+var escaper = document.createElement('div');
+for (var key in fragments)
+{
+    var value = fragments[key];
+    flags <<= 1;
+    if (value.indexOf("\n") != -1)
+        flags |= 1;
+    flags &= 3;
+    if (flags != 0 && (flags & flags - 1) == 0)
+        document.write("<HR>");
+    escaper.innerText = value;
+    value = mnemonics[key];
+    if (value)
+        document.writeln("<em>&mdash; " + value + " &mdash;</em>\n");
+    document.writeln(escaper.innerHTML);
+}
+document.write("</pre>");
+</script>

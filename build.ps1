@@ -83,15 +83,39 @@ cmd /c "git tag $tagname -a -m $tagname 2>&1"
 cmd /c "nmake 2>&1"
 Set-Location ..\..
 
+# Create LICENSE.*.html files from scancode-toolkit reports, and spread them as per dependencies
+(Get-Content 'LICENSE.html.in') `
+    -Replace '@SUBJECT@', 'libiconv' `
+    -Replace '@JSON@', ("{`r`n" + ((Get-Content 'LICENSE.libiconv.json').Where({ $_ -match "`"files`":" }, 'SkipUntil') -Join "`r`n")) `
+    | Tee 'libiconv\LICENSE.libiconv.html' `
+    | Tee 'libxml2\LICENSE.libiconv.html' `
+    | Out-Null
+(Get-Content 'LICENSE.html.in') `
+    -Replace '@SUBJECT@', 'zlib' `
+    -Replace '@JSON@', ("{`r`n" + ((Get-Content 'LICENSE.zlib.json').Where({ $_ -match "`"files`":" }, 'SkipUntil') -Join "`r`n")) `
+    | Tee 'zlib\LICENSE.zlib.html' `
+    | Tee 'libxml2\LICENSE.zlib.html' `
+    | Out-Null
+(Get-Content 'LICENSE.html.in') `
+    -Replace '@SUBJECT@', 'libxml2' `
+    -Replace '@JSON@', ("{`r`n" + ((Get-Content 'LICENSE.libxml2.json').Where({ $_ -match "`"files`":" }, 'SkipUntil') -Join "`r`n")) `
+    | Tee 'libxml2\LICENSE.libxml2.html' `
+    | Out-Null
+(Get-Content 'LICENSE.html.in') `
+    -Replace '@SUBJECT@', 'lib(e)xslt' `
+    -Replace '@JSON@', ("{`r`n" + ((Get-Content 'LICENSE.libxslt.json').Where({ $_ -match "`"files`":" }, 'SkipUntil') -Join "`r`n")) `
+    | Tee 'libxslt\LICENSE.libxslt.html' `
+    | Out-Null
+
 if($vs2008) {
     # Pushed by Import-VisualStudioVars
     Pop-EnvironmentBlock
 }
 
 # Bundle releases
-Function BundleRelease($name, $lib, $inc)
+Function BundleRelease($src, $lib, $inc)
 {
-    $name = & cmd /c '--%' "cd $name & git describe --long"
+    $name = & cmd /c '--%' "cd $src & git describe --long"
     $name = "$name.$distname"
 
     New-Item -ItemType Directory .\dist\$name
@@ -107,6 +131,7 @@ Function BundleRelease($name, $lib, $inc)
     Copy-Item -Recurse $inc .\dist\$name\include
     Get-ChildItem -File -Recurse .\dist\$name\include | Where{$_.Name -NotMatch "\.h$" } | Remove-Item
 
+    Copy-Item $src\LICENSE.*.html .\dist\$name
     7z a dist\$name.7z dist\$name\.
     Remove-Item -Recurse -Path .\dist\$name
 }
