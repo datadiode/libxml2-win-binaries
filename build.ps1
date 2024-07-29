@@ -96,9 +96,8 @@ Function BundleRelease($name, $lib, $inc)
 
     New-Item -ItemType Directory .\dist\$name
 
-    New-Item -ItemType Directory .\dist\$name\bin
-    Copy-Item -Recurse $lib .\dist\$name\bin
-    Get-ChildItem -File -Recurse .\dist\$name\bin | Where{$_.Name -NotMatch "^([^_]+\.exe|[^_]+\.dll)$" } | Remove-Item
+    Copy-Item -Recurse $lib .\dist\$name
+    Get-ChildItem -File -Recurse .\dist\$name | Where{$_.Name -NotMatch "^([^_]+\.exe|[^_]+\.dll)$" } | Remove-Item
 
     New-Item -ItemType Directory .\dist\$name\lib
     Copy-Item -Recurse $lib .\dist\$name\lib
